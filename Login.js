@@ -9,17 +9,21 @@ export default function Login(app) {
             return (user.username === username && user.password === password);
         });
         if (potentialUser) {
-            req['currentUser'] = potentialUser;
-            res.send(potentialUser);
+            req.session['profile'] = potentialUser;
+            res.send(req.session);
         } else {
             console.log("No user found");
             res.sendStatus(400);
         }
     };
 
+    const profile = (req, res) => {
+        res.send(req.session['profile']);
+    }
+
     const logout = (req, res) => {
         req.session.destroy();
-        res.send(200);
+        res.sendStatus(200);
     };
 
     const register = (req, res) => {
@@ -37,4 +41,5 @@ export default function Login(app) {
     app.post("/login", (req, res) => login(req, res));
     app.post("/logout", (req, res) => logout(req, res));
     app.post("/register", (req, res) => register(req, res));
+    app.get("/profile", (req, res) => profile(req, res));
 }

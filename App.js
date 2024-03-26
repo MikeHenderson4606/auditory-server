@@ -8,10 +8,14 @@ const app = express();
 app.use(session({
     resave: false,
     saveUninitialized: true,
-    secret: "Nothing to see here"
+    secret: "Nothing to see here",
+    cookie: { secure: false }
 }));
 
-app.use(cors());
+app.use(cors({
+    credentials: true,
+    origin: 'http://localhost:3000'
+}));
 app.use(express.json());
 
 Login(app);
