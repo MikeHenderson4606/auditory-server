@@ -9,6 +9,7 @@ export default function Login(app) {
             return (user.username === username && user.password === password);
         });
         if (potentialUser) {
+            req['currentUser'] = potentialUser;
             res.send(potentialUser);
         } else {
             console.log("No user found");
@@ -17,7 +18,8 @@ export default function Login(app) {
     };
 
     const logout = (req, res) => {
-        
+        req.session.destroy();
+        res.send(200);
     };
 
     const register = (req, res) => {
