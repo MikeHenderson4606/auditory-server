@@ -38,8 +38,8 @@ export default function Login(app) {
         res.send("Registering new user");
     };
 
-    app.post("/login", (req, res) => login(req, res));
-    app.post("/logout", (req, res) => logout(req, res));
-    app.post("/register", (req, res) => register(req, res));
-    app.get("/profile", (req, res) => profile(req, res));
+    app.post("/api/login", (req, res) => login(req, res));
+    app.post("/api/logout", (req, res) => logout(req, res));
+    app.post("/api/register", (req, res) => register(req, res));
+    app.get("/api/profile", (req, res) => profile(req, res));
 }
