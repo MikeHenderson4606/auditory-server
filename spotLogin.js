@@ -38,50 +38,50 @@ export default function spotLogin(app) {
         console.log(req.query);
         var code = req.query.code || null;
         var state = req.query.state || null;
-
-        res.redirect('/');
         
-        // if (state === null) {
-        //     res.redirect('/#' +
-        //     queryString.stringify({
-        //         error: 'state_mismatch'
-        //     }));
-        // } else {
-        //     const url = 'https://accounts.spotify.com/api/token';
-        //     var authOptions = {
-        //         client_id: clientID,
-        //         client_secret: clientSecret,
-        //         grant_type: 'authorization_code',
-        //         code: code,
-        //         redirect_uri: redirect_uri
-        //     };
-        //     axios.post(url, queryString.stringify(authOptions), {
-        //         headers: {
-        //             'content-type': 'application/x-www-form-urlencoded'
-        //         }
-        //     }).then((response => {
-        //         accessToken = response.data.access_token;
-        //         axios.get('https://api.spotify.com/v1/me', {
-        //             headers: {
-        //                 Authorization: 'Bearer ' + accessToken
-        //             }
-        //         }).then(response => {
-        //             console.log(response.data);
-        //             req.session['spotifyProfile'] = response.data;
-        //         }).catch(err => {
-        //             res.sendStatus(400);
-        //         })
-        //     })).catch((error) => {
-        //         console.log(error.code);
-        //         res.sendStatus(400);
-        //     });
-        //     res.send("Complete");
-        // }
+        if (state === null) {
+            res.redirect('/#' +
+            queryString.stringify({
+                error: 'state_mismatch'
+            }));
+        } else {
+            const url = 'https://accounts.spotify.com/api/token';
+            var authOptions = {
+                client_id: clientID,
+                client_secret: clientSecret,
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: redirect_uri
+            };
+            axios.post(url, queryString.stringify(authOptions), {
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded'
+                }
+            }).then((response => {
+                accessToken = response.data.access_token;
+                axios.get('https://api.spotify.com/v1/me', {
+                    headers: {
+                        Authorization: 'Bearer ' + accessToken
+                    }
+                }).then(response => {
+                    console.log(response.data);
+                    req.session["spProfile"] = response.data;
+                    console.log(req.session["spProfile"]);
+                }).catch(err => {
+                    res.sendStatus(400);
+                })
+            })).catch((error) => {
+                console.log(error.code);
+                res.sendStatus(400);
+            });
+            res.sendStatus(200);
+        }
     }
 
     const spGetProfile = (req, res) => {
         try {
-            //res.send(req.session['spotifyProfile']);
+            console.log(req.session["spProfile"]);
+            res.send(req.session.spProfile);
         } catch(err) {
             res.sendStatus(400);
         }
