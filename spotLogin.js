@@ -1,6 +1,5 @@
 
 import axios from 'axios';
-import { subtle } from 'crypto';
 
 const clientID = "08a8c25e8e4b41bba3e1b1e14e5dd2ee";
 const redirect_uri = "http://localhost:4000/api/spcallback";
@@ -22,7 +21,7 @@ export default async function spotLogin(app) {
 
         const config = {
             headers: {
-                'content-type': 'application/x-www-form-urlencoded',
+                'content-type': 'application/x-www-form-urlencoded'
             },
         };
         
@@ -33,7 +32,7 @@ export default async function spotLogin(app) {
             req.session["spAccessToken"] = response.access_token;
             res.redirect("http://localhost:3000/");
         } catch (err) {
-            console.log(err.code);
+            console.log("Error getting the api token: " + err.code);
             res.sendStatus(400);
         }
     }
@@ -42,16 +41,22 @@ export default async function spotLogin(app) {
         try {
             const accessToken = req.session["spAccessToken"];
 
-            const response = await axios.get(`${SPOTIFY_API}/me`, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
-            res.send({
-                userData: response.data,
-                accessToken: accessToken
-            });
+            if (accessToken) {
+                const response = await axios.get(`${SPOTIFY_API}/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                res.send({
+                    accessToken: accessToken,
+                    userData: response.data
+                });
+            } else {
+                console.log("Access token is undefined");
+                res.sendStatus(400);
+            }
         } catch(err) {
+            console.log("Error getting the spotify user data: " + err.code);
             res.sendStatus(400);
         }
     }
@@ -65,7 +70,53 @@ export default async function spotLogin(app) {
         }
     }
 
+    const getSpotifyPlaylists = async (req, res) => {
+        try {
+            const accessToken = req.session["spAccessToken"];
+            const userID = req.params.userId;
+
+            if (accessToken) {
+                const response = await axios.get(`${SPOTIFY_API}/users/${userID}/playlists`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                res.send(response.data);
+            } else {
+                console.log("Access token is undefined");
+                res.sendStatus(400);
+            }
+        } catch (err) {
+            console.log("There was an error getting your spotify playlists");
+            res.sendStatus(400);
+        }
+    }
+
+    const getSpotifyTracks = async (req, res) => {
+        try {
+            const accessToken = req.session["spAccessToken"];
+            const playlistId = req.params.playlistId;
+
+            if (accessToken) {
+                const response = await axios.get(`${SPOTIFY_API}/playlists/${playlistId}/tracks`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                res.send(response.data);
+            } else {
+                console.log("Access token is undefined");
+                res.sendStatus(400);
+            }
+        } catch (err) {
+            console.log("There was an error getting your spotify playlists");
+            res.sendStatus(400);
+        }
+    }
+
     app.get('/api/spcallback', (req, res) => spCallback(req, res));
     app.get('/api/spprofile', (req, res) => spGetProfile(req, res));
     app.post('/api/setCodeVerifier', (req, res) => setCodeVerifier(req, res));
+    app.get('/api/spplaylists/:userId', (req, res) => getSpotifyPlaylists(req, res));
+    app.get('/api/sptracks/:playlistId', (req, res) => getSpotifyTracks(req, res));
 }
