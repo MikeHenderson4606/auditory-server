@@ -54,9 +54,15 @@ export default async function spotLogin(app) {
             }
 
             if (accessToken) {
-                const response = await axios(
-                    requestTemplate
-                )
+                let response = await axios(requestTemplate);
+                if (response.data.next) {
+                    const newUrl = response.data.next;
+                    requestTemplate.url = newUrl;
+                    const nextResponse = await SpotifyAPITemplate(req, requestTemplate);
+                    response.data.items.push(nextResponse.items);
+                    console.log(response.data.items.length);
+                    return response.data;
+                }
                 return response.data;
             } else {
                 console.log("Access token is undefined");
@@ -64,7 +70,8 @@ export default async function spotLogin(app) {
             }
         } catch (err) {
             console.log("There was an error using the request template: ");
-            console.log(requestTemplate);
+            console.log(requestTemplate.method, requestTemplate.url);
+            console.log("With error code: ", err.code);
             return 400;
         }
     }
