@@ -59,8 +59,9 @@ export default async function spotLogin(app) {
                     const newUrl = response.data.next;
                     requestTemplate.url = newUrl;
                     const nextResponse = await SpotifyAPITemplate(req, requestTemplate);
-                    response.data.items.push(nextResponse.items);
-                    console.log(response.data.items.length);
+                    //console.log(nextResponse);
+                    response.data.items = response.data.items.concat(nextResponse.items);
+                    //console.log(response.data);
                     return response.data;
                 }
                 return response.data;
