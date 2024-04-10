@@ -46,35 +46,6 @@ export default async function spotLogin(app) {
         }
     }
 
-    const spGetProfile = async (req, res) => {
-        const apiPath = `/me`;
-
-        res.send({
-            accessToken: req.session["spAccessToken"],
-            userData: await SpotifyAPITemplate(req, apiPath)
-        });
-    }
-
-    const getSpotifyPlaylists = async (req, res) => {
-        const userID = req.params.userId;
-        const apiPath = `/users/${userID}/playlists`
-
-        res.send(await SpotifyAPITemplate(req, apiPath))
-    }
-
-    const getSpotifyTracks = async (req, res) => {
-        const playlistId = req.params.playlistId;
-        const apiPath = `/playlists/${playlistId}/tracks`
-
-        res.send(await SpotifyAPITemplate(req, apiPath));
-    }
-
-    app.get('/api/spcallback', (req, res) => spCallback(req, res));
-    app.get('/api/spprofile', (req, res) => spGetProfile(req, res));
-    app.post('/api/setCodeVerifier', (req, res) => setCodeVerifier(req, res));
-    app.get('/api/spplaylists/:userId', (req, res) => getSpotifyPlaylists(req, res));
-    app.get('/api/sptracks/:playlistId', (req, res) => getSpotifyTracks(req, res));
-
     async function SpotifyAPITemplate(req, apiPath) {
         try {
             const accessToken = req.session["spAccessToken"];
@@ -95,6 +66,70 @@ export default async function spotLogin(app) {
             return 400;
         }
     }
+
+    const spGetProfile = async (req, res) => {
+        const apiPath = `/me`;
+
+        res.send({
+            accessToken: req.session["spAccessToken"],
+            userData: await SpotifyAPITemplate(req, apiPath)
+        });
+    }
+
+    const getSpotifyPlaylists = async (req, res) => {
+        const userID = req.params.userId;
+        const apiPath = `/users/${userID}/playlists`
+
+        res.send(await SpotifyAPITemplate(req, apiPath));
+    }
+
+    const getSpotifyTracks = async (req, res) => {
+        const playlistId = req.params.playlistId;
+        const apiPath = `/playlists/${playlistId}/tracks`
+
+        res.send(await SpotifyAPITemplate(req, apiPath));
+    }
+
+    const playSong = async (req, res) => {
+        const trackId = req.params.trackId;
+        const apiPath = `/me/player/play`;
+
+        const deviceResponse = await SpotifyAPITemplate(req, "/me/player/devices")
+        const deviceId = deviceResponse.devices[0].id;
+        console.log(deviceId);
+        console.log(trackId);
+
+        try {
+            const accessToken = req.session["spAccessToken"];
+
+            if (accessToken) {
+                console.log(`${SPOTIFY_API}${apiPath}?device_id=${deviceId}`);
+                const response = await axios.put(`${SPOTIFY_API}${apiPath}?device_id=${deviceId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    data: {
+                        uris: [trackId]
+                    }
+                });
+                console.log(response);
+                res.send(response.data);
+            } else {
+                console.log("Access token is undefined");
+                res.sendStatus(400);
+            }
+        } catch (err) {
+            console.log("There was an error using the path: " + apiPath);
+            res.sendStatus(400);
+        }
+    }
+
+    app.get('/api/spcallback', (req, res) => spCallback(req, res));
+    app.get('/api/spprofile', (req, res) => spGetProfile(req, res));
+    app.post('/api/setCodeVerifier', (req, res) => setCodeVerifier(req, res));
+    app.get('/api/spplaylists/:userId', (req, res) => getSpotifyPlaylists(req, res));
+    app.get('/api/sptracks/:playlistId', (req, res) => getSpotifyTracks(req, res));
+    app.get('/api/spplaysong/:trackId', (req, res) => playSong(req, res));
 }
 
 
