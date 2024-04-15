@@ -3,6 +3,7 @@ import cors from 'cors'; // Cross origin resource sharing
                          // SSL: Secure sockets layer
 import Login from './Login.js';
 import spotLogin from './spotLogin.js';
+import PageInfo from './PageInfo.js';
 import session from 'express-session';
 const app = express();
 
@@ -22,5 +23,6 @@ app.use(express.json());
 
 spotLogin(app);
 Login(app);
+PageInfo(app);
 
 app.listen(4000);
