@@ -34,14 +34,15 @@
       1,
       2
     ],
+    "follows": [],
     "role": "USER"
   },
   {
-    "username": "user 5",
+    "username": "user 6",
     "password": "password",
-    "email": "elasdf",
-    "number": "09128312",
-    "userId": "function now() { [native code] }",
+    "email": "laksdjf",
+    "number": "091283012",
+    "userId": 1713494468417,
     "likes": [],
     "posts": [],
     "follows": [],

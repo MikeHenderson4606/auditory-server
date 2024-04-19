@@ -19,10 +19,12 @@ export default function Login(app) {
     };
 
     const profile = (req, res) => {
+        console.log(req.session);
         res.send(req.session["profile"]);
     }
 
     const logout = (req, res) => {
+        console.log("Signing the user out");
         req.session.destroy();
         res.sendStatus(200);
     };
@@ -32,8 +34,8 @@ export default function Login(app) {
         var password = req.body.password;
         var email = req.body.email;
         var number = req.body.number;
-        var userId = Date.now.toString();
-        console.log(userId);
+        var userId = Date.now();
+
         if (!db.users.find((user) => user.username === username)) {
             var newUser = {
                 username: username,
@@ -46,6 +48,8 @@ export default function Login(app) {
                 follows: [],
                 role: "USER"
             }
+            req.session["profile"] = newUser;
+            req.session.save();
             
             db.users.push(newUser);
 
@@ -55,8 +59,6 @@ export default function Login(app) {
                 console.log(err);
                 console.log("Cannot write to file");
             }
-            
-            res.session["profile"] = newUser;
 
             res.json({
                 code: 200,
