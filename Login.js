@@ -1,5 +1,6 @@
 
 import { db } from "./Database/index.js";
+import fs from 'fs';
 
 export default function Login(app) {
     const login = (req, res) => {
@@ -29,13 +30,46 @@ export default function Login(app) {
     const register = (req, res) => {
         var username = req.body.username;
         var password = req.body.password;
-        var newUser = {
-            username: username,
-            password: password,
-            userId: Date.now.toString()
+        var email = req.body.email;
+        var number = req.body.number;
+        var userId = Date.now.toString();
+        console.log(userId);
+        if (!db.users.find((user) => user.username === username)) {
+            var newUser = {
+                username: username,
+                password: password,
+                email: email,
+                number: number,
+                userId: userId,
+                likes: [],
+                posts: [],
+                follows: [],
+                role: "USER"
+            }
+            
+            db.users.push(newUser);
+
+            try {
+                fs.writeFileSync('./Database/users.json', JSON.stringify(db.users, null, 2));
+            } catch (err) {
+                console.log(err);
+                console.log("Cannot write to file");
+            }
+            
+            res.session["profile"] = newUser;
+
+            res.json({
+                code: 200,
+                userId: userId,
+                message: "User created"
+            });
+        } else {
+            res.json({
+                code: 400,
+                message: "There already exists a user with that username"
+            })
         }
-        db.users.push(newUser);
-        res.send("Registering new user");
+        
     };
 
     app.post("/api/login", (req, res) => login(req, res));

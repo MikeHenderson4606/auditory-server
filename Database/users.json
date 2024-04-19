@@ -1,86 +1,50 @@
 [
-    {
-        "username": "user 1",
-        "password": "password",
-        "userId": 1,
-        "likes": [
-            0, 1, 4
-        ],
-        "posts": [
-            {
-                "title": "Song 1",
-                "artist": "Artist 1",
-                "poster": "Person 1",
-                "description": "Description 1",
-                "link": "https://www.spotify.com",
-                "id": 0,
-                "likedBy": [
-                    {
-                        "userId": 1
-                    },
-                    {
-                        "userId": 2
-                    }
-                ]
-            },
-            {
-                "title": "Song 4",
-                "artist": "Artist 4",
-                "poster": "Person 4",
-                "description": "Description 4",
-                "link": "https://www.spotify.com",
-                "id": 3,
-                "likedBy": []
-            },
-            {
-                "title": "Song 5",
-                "artist": "Artist 5",
-                "poster": "Person 5",
-                "description": "Description 5",
-                "link": "https://www.spotify.com",
-                "id": 4,
-                "likedBy": [
-                    {
-                        "userId": 1
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "username": "user 2",
-        "password": "password2",
-        "userId": 2,
-        "likes": [
-            0, 2
-        ],
-        "posts": [
-            {
-                "title": "Song 2",
-                "artist": "Artist 2",
-                "poster": "Person 2",
-                "description": "Description 2",
-                "link": "https://www.spotify.com",
-                "id": 1,
-                "likedBy": [
-                    {
-                        "userId": 1
-                    }
-                ]
-            },
-            {
-                "title": "Song 3",
-                "artist": "Artist 3",
-                "poster": "Person 3",
-                "description": "Description 3",
-                "link": "https://www.spotify.com",
-                "id": 2,
-                "likedBy": [
-                    {
-                        "userId": 2
-                    }
-                ]
-            }
-        ]
-    }
+  {
+    "username": "user 1",
+    "password": "password",
+    "email": "email@email.com",
+    "number": "5554547890",
+    "userId": 1,
+    "likes": [
+      0,
+      1,
+      4
+    ],
+    "posts": [
+      0,
+      3,
+      4
+    ],
+    "follows": [
+      2
+    ],
+    "role": "USER"
+  },
+  {
+    "username": "user 2",
+    "password": "password2",
+    "email": "email2@email.com",
+    "number": "1111111111",
+    "userId": 2,
+    "likes": [
+      0,
+      2
+    ],
+    "posts": [
+      1,
+      2
+    ],
+    "role": "USER"
+  },
+  {
+    "username": "user 5",
+    "password": "password",
+    "email": "elasdf",
+    "number": "09128312",
+    "userId": "function now() { [native code] }",
+    "likes": [],
+    "posts": [],
+    "follows": [],
+    "role": "USER"
+  }
 ]

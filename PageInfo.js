@@ -7,7 +7,6 @@ export default function PageInfo(app) {
             const post = db.posts.find((post) => {
                 return post.id == postId
             });
-            console.log(post);
             res.json(post);
         } catch (err) {
             res.sendStatus(400);
