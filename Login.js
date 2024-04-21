@@ -10,7 +10,7 @@ export default function Login(app) {
             return (user.username === username && user.password === password);
         });
         if (potentialUser) {
-            req.session["profile"] = potentialUser;
+            req.session["profile"] = {...potentialUser, password: ""};
             res.send(req.session);
         } else {
             console.log("No user found");
@@ -19,8 +19,7 @@ export default function Login(app) {
     };
 
     const profile = (req, res) => {
-        console.log(req.session);
-        res.send(req.session["profile"]);
+        res.send(req.session['profile']);
     }
 
     const logout = (req, res) => {
@@ -48,7 +47,7 @@ export default function Login(app) {
                 follows: [],
                 role: "USER"
             }
-            req.session["profile"] = newUser;
+            req.session["profile"] = {...newUser, password: ""};
             req.session.save();
             
             db.users.push(newUser);
@@ -74,8 +73,29 @@ export default function Login(app) {
         
     };
 
+    const getUser = (req, res) => {
+        const userId = req.params.userId;
+        const user = db.users.find((user) => {
+            return user.userId === parseInt(userId);
+        });
+        if (user) {
+            res.json({
+                code: 200,
+                user: {...user, password: ""},
+                message: "User Found"
+            });
+        } else {
+            res.json({
+                code: 400,
+                message: "User with id " + userId + " cannot be found"
+            });
+        }
+        
+    }
+
     app.post("/api/login", (req, res) => login(req, res));
     app.post("/api/logout", (req, res) => logout(req, res));
     app.post("/api/register", (req, res) => register(req, res));
     app.get("/api/profile", (req, res) => profile(req, res));
+    app.get("/api/user/:userId", (req, res) => getUser(req, res));
 }
