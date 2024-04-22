@@ -40,7 +40,7 @@ export default async function spotLogin(app) {
             const response = body.data;
 
             req.session["spAccessToken"] = response.access_token;
-            res.redirect(process.env.FORNTEND_URL);
+            res.redirect(process.env.FRONTEND_URL);
         } catch (err) {
             console.log("Error getting the api token: " + err.code);
             res.sendStatus(400);
