@@ -5,19 +5,32 @@ import Login from './Login.js';
 import spotLogin from './spotLogin.js';
 import PageInfo from './PageInfo.js';
 import session from 'express-session';
-const app = express();
 
-app.use(session({
-    resave: false,
-    saveUninitialized: true,
-    secret: "Nothing to see here",
-    cookie: { secure: false }
-}));
+const app = express();
 
 app.use(cors({
     credentials: true,
-    origin: 'http://localhost:3000'
+    origin: process.env.FRONTEND_URL
 }));
+
+// Deployment url: https://main--tangerine-palmier-ecdbf4.netlify.app/
+
+const sessionOptions = {
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+};
+
+if (process.env.NODE_ENV !== "development") {
+    sessionOptions.proxy = true;
+    sessionOptions.cookie = {
+        sameSite: "none",
+        secure: true,
+        domain: process.env.HTTP_SERVER_DOMAIN,
+    };
+}
+
+app.use(session(sessionOptions));
 
 app.use(express.json());
 
