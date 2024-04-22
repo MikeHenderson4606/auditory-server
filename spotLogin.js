@@ -1,8 +1,9 @@
 
 import axios from 'axios';
+import "dotenv/config";
 
 export const clientID = process.env.CLIENT_ID;
-const redirect_uri = `${process.env.HTTP_SERVER_DOMAIN}/api/spcallback`;
+export const redirect_uri = `${process.env.HTTP_SERVER_DOMAIN}/api/spcallback`;
 const SPOTIFY_API = "https://api.spotify.com/v1";
 
 export default async function spotLogin(app) {
