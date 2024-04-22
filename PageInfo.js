@@ -51,7 +51,44 @@ export default function PageInfo(app) {
         }
     }
 
+    const searchPosts = (req, res) => {
+        try {
+            const query = req.params.query;
+            const postTitle = req.params.postTitle;
+            const postArtist = req.params.postArtist;
+            const postPoster = req.params.postPoster;
+            console.log(query, postTitle, postArtist, postPoster);
+            let finalResult = [];
+
+            if (postTitle) {
+                const postTitlesMatch = db.posts.filter((post) => {
+                    return post.title.includes(query);
+                });
+                finalResult = finalResult.concat(postTitlesMatch);
+            }
+            if (postArtist) {
+                const postArtistsMatch = db.posts.filter((post) => {
+                    return post.artist.includes(query);
+                });
+                finalResult = finalResult.concat(postArtistsMatch);
+            }
+            if (postPoster) {
+                const postPosterMatch = db.posts.filter((post) => {
+                    return post.poster.includes(query);
+                });
+                finalResult = finalResult.concat(postPosterMatch);
+            }
+            res.send(finalResult);
+        } catch (err) {
+            res.json({
+                code: 400,
+                message: "Something went wrong trying to search for posts"
+            })
+        }
+    }
+
     app.get('/api/postdetails/:postId', (req, res) => getPostDetails(req, res));
     app.get('/api/genericposts', (req, res) => getGenericPosts(req, res));
     app.post('/api/likepost', (req, res) => likePost(req, res));
+    app.get('/api/searchposts/:query/:postTitle/:postArtist/:postPoster', (req, res) => searchPosts(req, res));
 }
