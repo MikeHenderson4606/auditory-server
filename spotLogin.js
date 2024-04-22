@@ -1,8 +1,8 @@
 
 import axios from 'axios';
 
-const clientID = "08a8c25e8e4b41bba3e1b1e14e5dd2ee";
-const redirect_uri = "http://localhost:4000/api/spcallback";
+export const clientID = process.env.CLIENT_ID;
+const redirect_uri = `${process.env.HTTP_SERVER_DOMAIN}/api/spcallback`;
 const SPOTIFY_API = "https://api.spotify.com/v1";
 
 export default async function spotLogin(app) {
