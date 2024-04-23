@@ -5,6 +5,7 @@ import Login from './Login.js';
 import spotLogin from './spotLogin.js';
 import PageInfo from './PageInfo.js';
 import session from 'express-session';
+import MemoryStore from 'memorystore';
 import "dotenv/config";
 
 const app = express();
@@ -31,7 +32,9 @@ if (process.env.NODE_ENV !== "development") {
     };
 }
 
-app.use(session(sessionOptions));
+app.use(session({
+    store: new MemoryStore(sessionOptions)
+}));
 
 app.use(express.json());
 
