@@ -32,9 +32,7 @@ if (process.env.NODE_ENV !== "development") {
     };
 }
 
-app.use(session({
-    store: new MemoryStore(sessionOptions)
-}));
+app.use(session(sessionOptions));
 
 app.use(express.json());
 
