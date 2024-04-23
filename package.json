@@ -6,7 +6,8 @@
   "main": "App.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node App.js"
+    "start": "node App.js",
+    "dev-start": "nodemon --ignore Database"
   },
   "author": "",
   "license": "ISC",

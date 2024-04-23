@@ -21,6 +21,19 @@ export default function PageInfo(app) {
         }
     }
 
+    const getPersonalPosts = (req, res) => {
+        try {
+            const followsList = req.session['profile'].follows;
+
+            const personalPosts = db.posts.filter((post) => {
+                return followsList.includes(post.posterId);
+            });
+            res.json(personalPosts);
+        } catch (err) {
+            res.sendStatus(400);
+        }
+    }
+
     const likePost = (req, res) => {
         try {
             const userId = req.body.userId;
@@ -87,8 +100,43 @@ export default function PageInfo(app) {
         }
     }
 
+    const searchUsers = (req, res) => {
+        try {
+            const query = req.params.query;
+            const userUsername = req.params.username;
+            const userUserId = req.params.userId;
+            console.log(query, userUsername, userUserId);
+            let finalResult = [];
+            let users = db.users;
+            users.map((user) => {delete user["password"]});
+
+            if (userUsername) {
+                const userUsernameMatch = users.filter((user) => {
+                    console.log(user.username);
+                    return user.username.includes(query);
+                });
+                finalResult = finalResult.concat(userUsernameMatch);
+            }
+            if (userUserId && parseInt(query)) {
+                const userUserIdMatch = users.filter((user) => {
+                    return user.userId === parseInt(query);
+                });
+                finalResult = finalResult.concat(userUserIdMatch);
+            }
+            res.send(finalResult);
+        } catch (err) {
+            console.log(err);
+            res.json({
+                code: 400,
+                message: "Something went wrong trying to search for users"
+            })
+        }
+    }
+
     app.get('/api/postdetails/:postId', (req, res) => getPostDetails(req, res));
     app.get('/api/genericposts', (req, res) => getGenericPosts(req, res));
+    app.get('/api/personalposts', (req, res) => getPersonalPosts(req, res));
     app.post('/api/likepost', (req, res) => likePost(req, res));
     app.get('/api/searchposts/:query/:postTitle/:postArtist/:postPoster', (req, res) => searchPosts(req, res));
+    app.get('/api/searchusers/:query/:username/:userId', (req, res) => searchUsers(req, res));
 }

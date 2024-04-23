@@ -181,6 +181,18 @@ export default async function spotLogin(app) {
         res.send(await SpotifyAPITemplate(req, requestTemplate));
     }
 
+    const searchSong = async (req, res) => {
+        const apiPath = `/search`;
+        const query = req.params.query;
+
+        const requestTemplate = {
+            method: 'get',
+            url: `${SPOTIFY_API}${apiPath}?${query}`
+        }
+
+        res.send(await SpotifyAPITemplate(req, requestTemplate));
+    }
+
     app.get('/api/spcallback', (req, res) => spCallback(req, res));
     app.get('/api/spprofile', (req, res) => spGetProfile(req, res));
     app.post('/api/setCodeVerifier', (req, res) => setCodeVerifier(req, res));
@@ -189,6 +201,7 @@ export default async function spotLogin(app) {
     app.get('/api/spplaysong/:trackId', (req, res) => playSong(req, res));
     app.get('/api/sppause', (req, res) => pauseSong(req, res));
     app.get('/api/splikedsongs', (req, res) => getLikedSongs(req, res));
+    app.get('/api/searchsongs/:query', (req, res) => searchSong(req, res));
 }
 
 
