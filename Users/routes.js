@@ -16,8 +16,19 @@ export default function UserRoutes(app) {
         }
     };
 
-    const profile = (req, res) => {
-        res.send(req.session['profile']);
+    const profile = async (req, res) => {
+        const userSession = req.session['profile'];
+
+        if (userSession) {
+            const user = await dao.findUserById(userSession.userId);
+            if (user) {
+                res.send(user._doc);
+            } else {
+                res.send();
+            }
+        } else {
+            res.send();
+        }
     }
 
     const logout = (req, res) => {
@@ -31,7 +42,7 @@ export default function UserRoutes(app) {
         const password = req.body.password;
         const email = req.body.email;
         const number = req.body.number;
-        const userId = Date.now();
+        const userId = parseInt(Date.now());
 
         const users = await dao.findAllUsers();
 
@@ -115,10 +126,40 @@ export default function UserRoutes(app) {
         }
     }
 
+    const deleteUser = async (req, res) => {
+        try {
+            const userId = req.body.userId;
+            await dao.deleteUser(userId);
+            res.sendStatus(200);
+        } catch (err) {
+            res.sendStatus(400);
+        }
+    }
+
+    const updateUser = async (req, res) => {
+        try {
+            const body = req.body.data;
+            const userId = body.userId;
+            const username = body.username;
+            const email = body.email;
+            const number = parseInt(body.number);
+            console.log(userId, username, email, number);
+            await dao.updateUserUsername(userId, username);
+            await dao.updateUserEmail(userId, email);
+            await dao.updateUserNumber(userId, number);
+
+            res.sendStatus(200);
+        } catch(err) {
+            res.sendStatus(400);
+        }
+    }
+
     app.post("/api/login", (req, res) => login(req, res));
     app.post("/api/logout", (req, res) => logout(req, res));
     app.post("/api/register", (req, res) => register(req, res));
     app.get("/api/profile", (req, res) => profile(req, res));
     app.get("/api/user/:userId", (req, res) => getUser(req, res));
     app.get('/api/searchusers/:query/:username/:userId', (req, res) => searchUsers(req, res));
+    app.delete("/api/deleteuser", (req, res) => deleteUser(req, res));
+    app.put("/api/updateuser", (req, res) => updateUser(req, res));
 }
