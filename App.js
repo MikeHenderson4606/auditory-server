@@ -1,12 +1,16 @@
 import express from 'express';
 import cors from 'cors'; // Cross origin resource sharing
                          // SSL: Secure sockets layer
-import Login from './Login.js';
 import spotLogin from './spotLogin.js';
-import PageInfo from './PageInfo.js';
 import session from 'express-session';
-import MemoryStore from 'memorystore';
+import mongoose from 'mongoose';
 import "dotenv/config";
+import UserRoutes from './Users/routes.js';
+import PostRoutes from './Posts/routes.js';
+import CommentRoutes from './Comments/routes.js';
+
+const connectionString = process.env.DB_CONNECTION_STRING ||  'mongodb://127.0.0.1:27017/kanbas';
+mongoose.connect(connectionString);
 
 const app = express();
 console.log(process.env.FRONTEND_URL);
@@ -37,7 +41,8 @@ app.use(session(sessionOptions));
 app.use(express.json());
 
 spotLogin(app);
-Login(app);
-PageInfo(app);
+UserRoutes(app);
+PostRoutes(app);
+CommentRoutes(app);
 
 app.listen(4000);
